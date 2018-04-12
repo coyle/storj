@@ -2,18 +2,53 @@ package main
 
 import (
 	"fmt"
-
+	"os"
+	"log"
 	"github.com/kataras/iris"
-	"github.com/storj/storj/routes"
-	"github.com/storj/storj/storage/boltdb"
+	"storj.io/storj/routes"
+	"storj.io/storj/storage/boltdb"
+	"github.com/urfave/cli"
 )
 
 func main() {
+	// command line integration
+	nodeCli := cli.NewApp()
+	nodeCli.Name = "storj-node"
+	nodeCli.Version = "0.0.1"
+	nodeCli.Commands = []cli.Command{
+		{
+			Name: "cache",
+			Aliases: []string{"c"},
+			Usage: "run a redis cache for the node network",
+			Action: func (c *cli.Context) error {
+				fmt.Println("running as a redis cache", c.Args().First())
+				return nil
+			},
+		},
+		{
+			Name: "start",
+			Aliases: []string{"start", "up", "s"},
+			Usage: "start a storj node instance",
+			Action: func (c *cli.Context) error {
+				if err := StartServer(); err != nil {
+					return err
+				}
+				return nil
+			},
+		},
+	}
 
+	err := nodeCli.Run(os.Args)
+  if err != nil {
+    log.Fatal(err)
+  }
+}
+
+func StartServer () error {
 	bdb, err := boltdb.New()
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	defer bdb.DB.Close()
@@ -24,7 +59,9 @@ func main() {
 	SetRoutes(app, users)
 
 	app.Run(iris.Addr(":8080"))
+	return nil
 }
+
 
 // SetRoutes defines all restful routes on the service
 func SetRoutes(app *iris.Application, users routes.Users) {
