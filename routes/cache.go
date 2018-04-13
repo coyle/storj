@@ -16,11 +16,16 @@ type Node struct {
 }
 
 type Response struct {
-	Payload string
+	Payload []*Node
 	Meta struct {
 		Total int
 		Offset int
 	}
+}
+
+func (res *Response) AddNode (node *Node) []*Node {
+	res.Payload = append(res.Payload, node)
+	return res.Payload
 }
 
 func (cache *Cache) Set (ctx iris.Context) {
@@ -31,11 +36,12 @@ func (cache *Cache) Set (ctx iris.Context) {
 }
 
 func (cache *Cache) GetNodeAddress (ctx iris.Context) {
-	key := ctx.Params().Get("node")	
-	response := &Response{
-		Payload: cache.DB.Get(key),
-	}
-
+	response := &Response{}
+	response.AddNode(&Node{
+		Addr: "127.0.0.1",
+		Port: 3000,
+		NodeID: "000000000123457737373",
+	})
 	response.Meta.Total = 1
 	response.Meta.Offset = 0
 
