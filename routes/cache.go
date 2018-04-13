@@ -16,6 +16,6 @@ func (cache *Cache) Set (ctx iris.Context) {
 }
 
 func (cache *Cache) GetNodeAddress (ctx iris.Context) {
-	key := ctx.Params().Get("node")
-	ctx.Writef("finding address for node %s", key)
+	key := ctx.Params().Get("node")	
+	ctx.Writef(cache.DB.Get(key))
 }

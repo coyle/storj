@@ -44,3 +44,12 @@ func New () (*Client, error) {
 		}),
 	}, nil
 }
+
+func (client *Client) Get (key string) (string) {
+	cache, err := New()
+	if err != nil {
+		fmt.Println(err)
+	}
+	result, _ := cache.DB.Get(key).Result()
+	return result
+}
