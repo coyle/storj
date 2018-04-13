@@ -7,6 +7,7 @@ import (
 	"github.com/kataras/iris"
 	"storj.io/storj/routes"
 	"storj.io/storj/storage/boltdb"
+	"storj.io/storj/storage/redis"
 	"github.com/urfave/cli"
 )
 
@@ -21,7 +22,10 @@ func main() {
 			Aliases: []string{"c"},
 			Usage: "run a redis cache for the node network",
 			Action: func (c *cli.Context) error {
-				fmt.Println("running as a redis cache", c.Args().First())
+				fmt.Println("running as a redis cache node", c.Args().First())
+				if err := StartCacheServer(); err != nil {
+					return err
+				}
 				return nil
 			},
 		},
@@ -62,6 +66,21 @@ func StartServer () error {
 	return nil
 }
 
+func StartCacheServer () error {
+	app := iris.Default()
+	rdb, err := redis.New()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(rdb)
+
+	cache := routes.Cache{DB: rdb}
+	CacheRoutes(app, cache)
+
+	app.Run(iris.Addr(":9090"))
+	return nil
+}
 
 // SetRoutes defines all restful routes on the service
 func SetRoutes(app *iris.Application, users routes.Users) {
@@ -79,4 +98,9 @@ func SetRoutes(app *iris.Application, users routes.Users) {
 	// app.Post("/reports", reports.CreateReport)
 	// app.Get("/contacts?address=<address>&skip=<number>&limit=<number>", contacts.GetContacts)
 
+}
+
+func CacheRoutes(app *iris.Application, cache routes.Cache) {
+	app.Post("/cache/:node/:addr", cache.Set)
+	app.Get("/cache/:node", cache.GetNodeAddress)
 }

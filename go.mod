@@ -7,6 +7,7 @@ require (
 	"github.com/boltdb/bolt" v1.3.1
 	"github.com/ccding/go-stun" v0.0.0-20171206150302-d9bbe8f8fa7b
 	"github.com/chzyer/readline" v0.0.0-20171208011716-f6d7a1f6fbf3
+	"github.com/go-redis/redis" v0.0.0-20180314104251-877867d2845f
 	"github.com/google/uuid" v0.0.0-20171129191014-dec09d789f3d
 	"github.com/hashicorp/go-version" v0.0.0-20180322230233-23480c066577
 	"github.com/jbenet/go-base58" v0.0.0-20150317085156-6237cf65f3a6
