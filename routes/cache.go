@@ -12,7 +12,8 @@ type Cache struct {
 func (cache *Cache) Set (ctx iris.Context) {
 	node := ctx.Params().Get("node")
 	addr := ctx.Params().Get("addr")
-	ctx.Writef("node: %s, addr: %s", node, addr)
+	cache.DB.Set(node, addr)
+	ctx.Writef(node, addr)
 }
 
 func (cache *Cache) GetNodeAddress (ctx iris.Context) {

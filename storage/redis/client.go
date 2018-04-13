@@ -53,3 +53,16 @@ func (client *Client) Get (key string) (string) {
 	result, _ := cache.DB.Get(key).Result()
 	return result
 }
+
+func (client *Client) Set (key, value string) error {
+	cache, err := New()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	txErr := cache.DB.Set(key, value, 0).Err()
+	if txErr != nil {
+		return txErr
+	}
+	return nil
+}

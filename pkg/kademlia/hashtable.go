@@ -49,6 +49,7 @@ type hashTable struct {
 }
 
 func newHashTable(options *Options) (*hashTable, error) {
+	// TODO: If table doesn't exist, create it in Redis.
 	ht := &hashTable{}
 
 	rand.Seed(time.Now().UnixNano())
@@ -89,6 +90,7 @@ func newHashTable(options *Options) (*hashTable, error) {
 		ht.RoutingTable = append(ht.RoutingTable, []*node{})
 	}
 
+	// TODO: Persist ht into Redis
 	return ht, nil
 }
 
