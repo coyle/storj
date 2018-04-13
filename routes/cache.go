@@ -9,6 +9,20 @@ type Cache struct {
 	DB *redis.Client
 }
 
+type Node struct {
+	Addr string
+	Port int
+	NodeID string
+}
+
+type Response struct {
+	Payload string
+	Meta struct {
+		Total int
+		Offset int
+	}
+}
+
 func (cache *Cache) Set (ctx iris.Context) {
 	node := ctx.Params().Get("node")
 	addr := ctx.Params().Get("addr")
@@ -18,5 +32,12 @@ func (cache *Cache) Set (ctx iris.Context) {
 
 func (cache *Cache) GetNodeAddress (ctx iris.Context) {
 	key := ctx.Params().Get("node")	
-	ctx.Writef(cache.DB.Get(key))
+	response := &Response{
+		Payload: cache.DB.Get(key),
+	}
+
+	response.Meta.Total = 1
+	response.Meta.Offset = 0
+
+	ctx.JSON(response)
 }
