@@ -1,17 +1,26 @@
 package redis
 
 import (
+	"time"
+
 	"github.com/go-redis/redis"
 )
 
+// Client defines the interface for communicating with a Storj redis instance
+type Client interface {
+	Get(key string) ([]byte, error)
+	Set(key string, value []byte, ttl time.Duration) error
+	Ping() error
+}
+
 // Client is the entrypoint into Redis
-type Client struct {
+type redisClient struct {
 	DB *redis.Client
 }
 
-// New returns a configured Client instance, verifying a sucessful connection to redis
-func New(address, password string, db int) (*Client, error) {
-	c := &Client{
+// NewRedisClient returns a configured Client instance, verifying a sucessful connection to redis
+func NewRedisClient(address, password string, db int) (Client, error) {
+	c := &redisClient{
 		DB: redis.NewClient(&redis.Options{
 			Addr:     address,
 			Password: password,
@@ -28,11 +37,17 @@ func New(address, password string, db int) (*Client, error) {
 }
 
 // Get looks up the provided key from the redis cache returning either an error or the result.
-func (c *Client) Get(key string) (string, error) {
-	return c.DB.Get(key).Result()
+func (c *redisClient) Get(key string) ([]byte, error) {
+	return c.DB.Get(key).Bytes()
 }
 
 // Set adds a value to the provided key in the Redis cache, returning an error on failure.
-func (c *Client) Set(key, value string) error {
-	return c.DB.Set(key, value, 0).Err()
+
+func (c *redisClient) Set(key string, value []byte, ttl time.Duration) error {
+	return c.DB.Set(key, value, ttl).Err()
+}
+
+// Ping returns an error if pinging the underlying redis server failed
+func (c *redisClient) Ping() error {
+	return c.DB.Ping().Err()
 }

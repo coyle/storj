@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/coyle/storj/protos/overlay"
-	"github.com/go-redis/redis"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -12,21 +11,22 @@ const defaultNodeExpiration = 61 * time.Minute
 
 // OverlayClient is used to store overlay data in Redis
 type OverlayClient struct {
-	DB *redis.Client
+	DB Client
 }
 
 // NewOverlayClient returns a pointer to a new OverlayClient instance with an initalized connection to Redis.
 func NewOverlayClient(address, password string, db int) (*OverlayClient, error) {
+	rc, err := NewRedisClient(address, password, db)
+	if err != nil {
+		return nil, err
+	}
+
 	o := &OverlayClient{
-		DB: redis.NewClient(&redis.Options{
-			Addr:     address,
-			Password: password,
-			DB:       db,
-		}),
+		DB: rc,
 	}
 
 	// ping here to verify we are able to connect to the redis instacne with the initialized client.
-	if err := o.DB.Ping().Err(); err != nil {
+	if err := o.DB.Ping(); err != nil {
 		return nil, err
 	}
 
@@ -35,7 +35,7 @@ func NewOverlayClient(address, password string, db int) (*OverlayClient, error) 
 
 // Get looks up the provided nodeID from the redis cache
 func (o *OverlayClient) Get(key string) (*overlay.NodeAddress, error) {
-	d, err := o.DB.Get(key).Bytes()
+	d, err := o.DB.Get(key)
 	if err != nil {
 		return nil, err
 	}
@@ -52,5 +52,5 @@ func (o *OverlayClient) Set(nodeID string, value overlay.NodeAddress) error {
 		return err
 	}
 
-	return o.DB.Set(nodeID, data, defaultNodeExpiration).Err()
+	return o.DB.Set(nodeID, data, defaultNodeExpiration)
 }
