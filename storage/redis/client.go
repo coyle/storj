@@ -1,68 +1,38 @@
 package redis
 
 import (
-	"fmt"
-
 	"github.com/go-redis/redis"
 )
 
+// Client is the entrypoint into Redis
 type Client struct {
 	DB *redis.Client
 }
 
-func main() {
-	fmt.Println("vim-go")
-	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-		Password: "",
-		DB: 0,
-	})
-
-	fmt.Println("Pinging client")
-	pong, err := client.Ping().Result()
-	fmt.Println(pong, err)
-
-	err = client.Set("test", "1234", 0).Err()
-	if err != nil {
-		panic(err)
-	}
-
-	val, err2 := client.Get("test").Result()
-	if err2 != nil {
-		panic(err2)
-	}
-
-	fmt.Println("should equal 1234:", val)
-}
-
-func New () (*Client, error) {
-	return &Client {
+// New returns a configured Client instance, verifying a sucessful connection to redis
+func New(address, password string, db int) (*Client, error) {
+	c := &Client{
 		DB: redis.NewClient(&redis.Options{
-			Addr: "localhost:6379",
-			Password: "",
-			DB: 0,
+			Addr:     address,
+			Password: password,
+			DB:       db,
 		}),
-	}, nil
+	}
+
+	// ping here to verify we are able to connect to the redis instacne with the initialized client.
+	if err := c.DB.Ping().Err(); err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
-func (client *Client) Get (key string) (string) {
-	cache, err := New()
-	if err != nil {
-		fmt.Println(err)
-	}
-	result, _ := cache.DB.Get(key).Result()
-	return result
+// Get looks up the provided key from the redis cache returning either an error or the result.
+func (c *Client) Get(key string) (string, error) {
+	return c.DB.Get(key).Result()
 }
 
-func (client *Client) Set (key, value string) error {
-	cache, err := New()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	txErr := cache.DB.Set(key, value, 0).Err()
-	if txErr != nil {
-		return txErr
-	}
-	return nil
+// Set adds a value to the provided key in the Redis cache, returning an error on failure.
+func (c *Client) Set(key, value string) error {
+	return c.DB.Set(key, value, 0).Err()
 }
