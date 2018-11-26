@@ -52,7 +52,7 @@ func (mr *MockClientMockRecorder) Choose(ctx, op interface{}) *gomock.Call {
 }
 
 // Lookup mocks base method
-func (m *MockClient) Lookup(ctx context.Context, nodeID dht.NodeID) (*pb.Node, error) {
+func (m *MockClient) Lookup(ctx context.Context, nodeID storj.NodeID) (*pb.Node, error) {
 	ret := m.ctrl.Call(m, "Lookup", ctx, nodeID)
 	ret0, _ := ret[0].(*pb.Node)
 	ret1, _ := ret[1].(error)
@@ -65,7 +65,7 @@ func (mr *MockClientMockRecorder) Lookup(ctx, nodeID interface{}) *gomock.Call {
 }
 
 // BulkLookup mocks base method
-func (m *MockClient) BulkLookup(ctx context.Context, nodeIDs []dht.NodeID) ([]*pb.Node, error) {
+func (m *MockClient) BulkLookup(ctx context.Context, nodeIDs storj.NodeIDList) ([]*pb.Node, error) {
 	ret := m.ctrl.Call(m, "BulkLookup", ctx, nodeIDs)
 	ret0, _ := ret[0].([]*pb.Node)
 	ret1, _ := ret[1].(error)

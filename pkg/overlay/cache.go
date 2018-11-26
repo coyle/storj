@@ -115,7 +115,7 @@ func (o *Cache) Refresh(ctx context.Context) error {
 	nodes := o.DHT.Seen()
 
 	for _, v := range nodes {
-		if err := o.Put(v.GetId(), *v); err != nil {
+		if err := o.Put(v.Id, *v); err != nil {
 			return err
 		}
 	}

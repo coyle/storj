@@ -310,7 +310,7 @@ func (s *segmentStore) Repair(ctx context.Context, path storj.Path, lostPieces [
 	}
 
 	// get the nodes list that needs to be excluded
-	var excludeNodeIDs []dht.NodeID
+	var excludeNodeIDs storj.NodeIDList
 
 	// count the number of nil nodes thats needs to be repaired
 	totalNilNodes := 0
@@ -324,7 +324,7 @@ func (s *segmentStore) Repair(ctx context.Context, path storj.Path, lostPieces [
 			continue
 		}
 
-		excludeNodeIDs = append(excludeNodeIDs, node.IDFromString(v.GetId()))
+		excludeNodeIDs = append(excludeNodeIDs, node.IDFromString(v.Id))
 
 		// If node index exists in lostPieces, skip adding it to healthyNodes
 		if contains(lostPieces, i) {
@@ -418,7 +418,7 @@ func (s *segmentStore) Repair(ctx context.Context, path storj.Path, lostPieces [
 // lookupNodes calls Lookup to get node addresses from the overlay
 func (s *segmentStore) lookupNodes(ctx context.Context, seg *pb.RemoteSegment) (nodes []*pb.Node, err error) {
 	// Get list of all nodes IDs storing a piece from the segment
-	var nodeIds []dht.NodeID
+	var nodeIds storj.NodeIDList
 	for _, p := range seg.RemotePieces {
 		nodeIds = append(nodeIds, node.IDFromString(p.GetNodeId()))
 	}

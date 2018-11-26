@@ -223,7 +223,7 @@ func (db *DB) WriteBandwidthAllocToDB(ba *pb.RenterBandwidthAllocation) error {
 		return err
 	}
 
-	_, err := db.DB.Exec(`INSERT INTO bandwidth_agreements (satellite, agreement, signature) VALUES (?, ?, ?)`, pbad.GetSatelliteId(), ba.GetData(), ba.GetSignature())
+	_, err := db.DB.Exec(`INSERT INTO bandwidth_agreements (satellite, agreement, signature) VALUES (?, ?, ?)`, pbad.SatelliteId, ba.GetData(), ba.GetSignature())
 	return err
 }
 

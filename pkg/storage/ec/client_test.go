@@ -126,7 +126,7 @@ TestLoop:
 			if n == nil || tt.badInput {
 				continue
 			}
-			derivedID, err := id.Derive([]byte(n.GetId()))
+			derivedID, err := id.Derive([]byte(n.Id))
 			if !assert.NoError(t, err, errTag) {
 				continue TestLoop
 			}
@@ -229,7 +229,7 @@ TestLoop:
 		clients := make(map[*pb.Node]psclient.Client, len(tt.nodes))
 		for _, n := range tt.nodes {
 			if errs[n] == ErrOpFailed {
-				derivedID, err := id.Derive([]byte(n.GetId()))
+				derivedID, err := id.Derive([]byte(n.Id))
 				if !assert.NoError(t, err, errTag) {
 					continue TestLoop
 				}
@@ -288,7 +288,7 @@ TestLoop:
 		clients := make(map[*pb.Node]psclient.Client, len(tt.nodes))
 		for _, n := range tt.nodes {
 			if n != nil && errs[n] != ErrDialFailed {
-				derivedID, err := id.Derive([]byte(n.GetId()))
+				derivedID, err := id.Derive([]byte(n.Id))
 				if !assert.NoError(t, err, errTag) {
 					continue TestLoop
 				}

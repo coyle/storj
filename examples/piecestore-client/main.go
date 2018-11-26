@@ -81,6 +81,11 @@ func main() {
 				return argError.New(fmt.Sprintf("path (%s) is a directory, not a file", inputfile))
 			}
 
+			satelliteIdent, err := provider.NewFullIdentity(ctx, 12, 4)
+			if err != nil {
+				return err
+			}
+
 			var length = fileInfo.Size()
 			var ttl = time.Now().Add(24 * time.Hour)
 
@@ -90,7 +95,7 @@ func main() {
 			id := psclient.NewPieceID()
 
 			allocationData := &pb.PayerBandwidthAllocation_Data{
-        SatelliteId:    []byte("OhHeyThisIsAnUnrealFakeSatellite"),
+        SatelliteId:    satelliteIdent.ID,
 				Action:         pb.PayerBandwidthAllocation_PUT,
 				CreatedUnixSec: time.Now().Unix(),
 			}
@@ -153,8 +158,13 @@ func main() {
 				return err
 			}
 
+			satelliteIdent, err := provider.NewFullIdentity(ctx, 12, 4)
+			if err != nil {
+				return err
+			}
+
 			allocationData := &pb.PayerBandwidthAllocation_Data{
-        SatelliteId:    []byte("OhHeyThisIsAnUnrealFakeSatellite"),
+        SatelliteId:    satelliteIdent.ID,
 				Action:         pb.PayerBandwidthAllocation_GET,
 				CreatedUnixSec: time.Now().Unix(),
 			}

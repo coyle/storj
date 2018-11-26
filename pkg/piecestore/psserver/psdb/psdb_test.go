@@ -15,6 +15,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 	_ "github.com/mattn/go-sqlite3"
+	"storj.io/storj/internal/storj"
 
 	"storj.io/storj/pkg/pb"
 )
@@ -140,7 +141,7 @@ func TestHappyPath(t *testing.T) {
 		return serialize(t, &pb.RenterBandwidthAllocation_Data{
 			PayerAllocation: &pb.PayerBandwidthAllocation{
 				Data: serialize(t, &pb.PayerBandwidthAllocation_Data{
-					SatelliteId: []byte(satelliteID),
+					SatelliteId: teststorj.NodeIDFromString(satelliteID),
 				}),
 			},
 			Total: total,
