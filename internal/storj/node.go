@@ -28,7 +28,7 @@ func NodeIDsFromStrings(strs ...string) (ids storj.NodeIDList) {
 func fit(b []byte) []byte {
 	l := len(storj.NodeID{})
 	if len(b) < l {
-		return fit(append([]byte{1}, b...))
+		return fit(append(b, 1))
 	}
 	return b[:l]
 }
