@@ -6,7 +6,6 @@ package certificates
 import (
 	"context"
 	"os"
-	"time"
 
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
@@ -56,13 +55,6 @@ func (c CertClientConfig) SetupIdentity(
 	case caStatus != identity.NoCertNoKey && !caConfig.Overwrite:
 		return identity.ErrSetup.New("certificate authority file(s) exist: %s", caStatus)
 	default:
-		t, err := time.ParseDuration(caConfig.Timeout)
-		if err != nil {
-			return errs.Wrap(err)
-		}
-		ctx, cancel := context.WithTimeout(ctx, t)
-		defer cancel()
-
 		ca, err = caConfig.Create(ctx)
 		if err != nil {
 			return err

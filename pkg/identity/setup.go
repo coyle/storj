@@ -5,7 +5,6 @@ package identity
 
 import (
 	"context"
-	"time"
 
 	"github.com/zeebo/errs"
 )
@@ -19,15 +18,6 @@ var (
 func SetupIdentity(ctx context.Context, c CASetupConfig, i SetupConfig) error {
 	if s := c.Status(); s != NoCertNoKey && !c.Overwrite {
 		return ErrSetup.New("certificate authority file(s) exist: %s", s)
-	}
-	var cancel func()
-	if c.Timeout != "0" {
-		t, err := time.ParseDuration(c.Timeout)
-		if err != nil {
-			return errs.Wrap(err)
-		}
-		ctx, cancel = context.WithTimeout(ctx, t)
-		defer cancel()
 	}
 
 	// Create a new certificate authority
@@ -51,14 +41,7 @@ func SetupCA(ctx context.Context, c CASetupConfig) error {
 		return ErrSetup.New("certificate authority file(s) exist: %s", s)
 	}
 
-	t, err := time.ParseDuration(c.Timeout)
-	if err != nil {
-		return errs.Wrap(err)
-	}
-	ctx, cancel := context.WithTimeout(ctx, t)
-	defer cancel()
-
 	// Create a new certificate authority
-	_, err = c.Create(ctx)
+	_, err := c.Create(ctx)
 	return err
 }

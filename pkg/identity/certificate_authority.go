@@ -52,7 +52,6 @@ type CASetupConfig struct {
 	CertPath       string `help:"path to the certificate chain for this identity" default:"$CONFDIR/ca.cert"`
 	KeyPath        string `help:"path to the private key for this identity" default:"$CONFDIR/ca.key"`
 	Difficulty     uint64 `help:"minimum difficulty for identity generation" default:"15"`
-	Timeout        string `help:"timeout for CA generation; golang duration string (0 no timeout)" default:"5m"`
 	Overwrite      bool   `help:"if true, existing CA certs AND keys will overwritten" default:"false"`
 	Concurrency    uint   `help:"number of concurrent workers for certificate authority generation" default:"4"`
 }

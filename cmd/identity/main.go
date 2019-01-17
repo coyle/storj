@@ -44,7 +44,6 @@ var (
 	config struct {
 		BaseDir        string `default:"$CONFDIR/identity" help:"Directory containing service subdirectories"`
 		Difficulty     uint64 `default:"15" help:"minimum difficulty for identity generation"`
-		Timeout        string `default:"5m" help:"timeout for CA generation; golang duration string (0 no timeout)"`
 		Concurrency    uint   `default:"4" help:"number of concurrent workers for certificate authority generation"`
 		ParentCertPath string `help:"path to the parent authority's certificate chain"`
 		ParentKeyPath  string `help:"path to the parent authority's private key"`
