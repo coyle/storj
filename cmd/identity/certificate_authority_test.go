@@ -18,10 +18,15 @@ import (
 	"storj.io/storj/pkg/identity"
 )
 
-var (
-	defaultDirs = flag.Bool("default-dirs", false, "run tests which execure commands that read/write files in the default directories")
-	prebuiltTestCmds = flag.Bool("prebuild-test-cmds", false, "run tests using pre-built cli command binaries")
-)
+func init() {
+	flag.Parse()
+}
+
+func TestMain(m *testing.M) {
+	if *testcmd.Integration {
+		m.Run()
+	}
+}
 
 func TestCmdNewCA(t *testing.T) {
 	ctx := testcontext.New(t)
@@ -30,7 +35,7 @@ func TestCmdNewCA(t *testing.T) {
 	cmdIdentity, _ := testCommands(ctx, t)
 
 	t.Run("with default cert & key paths", func(t *testing.T) {
-		if !*defaultDirs {
+		if !*testcmd.DefaultDirs {
 			t.SkipNow()
 		}
 
@@ -191,7 +196,7 @@ func TestCmdNewService(t *testing.T) {
 	}
 
 	t.Run("with default base-dir", func(t *testing.T) {
-		if !*defaultDirs {
+		if !*testcmd.DefaultDirs {
 			t.SkipNow()
 		}
 
@@ -246,7 +251,7 @@ func TestCmdSigningRequest(t *testing.T) {
 	assert := assert.New(t)
 
 	t.Run("with default base-dir", func(t *testing.T) {
-		if !*defaultDirs {
+		if !*testcmd.DefaultDirs {
 			t.SkipNow()
 		}
 
@@ -306,8 +311,8 @@ func TestCmdSigningRequest(t *testing.T) {
 			t.Fatal(err)
 		}
 		certsServerProcess := *cmdCertificates.Process
-		defer ctx.Check(certsServerProcess.Kill)
 		time.Sleep(1 * time.Second)
+		ctx.Check(certsServerProcess.Kill)
 
 		// Create signer cert
 		err = cmdIdentity.Run(
@@ -355,7 +360,7 @@ func TestCmdSigningRequest(t *testing.T) {
 }
 
 func testCommands(ctx *testcontext.Context, t *testing.T) (_, _ *testcmd.Cmd) {
-	if *prebuiltTestCmds {
+	if *testcmd.PrebuiltTestCmds {
 		return testcmd.NewCmd(testcmd.CmdIdentity.String()),
 			testcmd.NewCmd(testcmd.CmdCertificates.String())
 	}

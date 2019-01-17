@@ -67,7 +67,7 @@ func (c Cmd) Run(args ...string) error {
 	if err != nil {
 		log.Println(c.Stderr.String())
 	}
-	//c.Process = cmd.Process
+	*c.Process = *cmd.Process
 	return err
 }
 
